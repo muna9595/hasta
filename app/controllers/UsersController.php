@@ -24,8 +24,17 @@ class UsersController extends BaseController {
 			// If register
 			if($auth)
 			{	
-				// If activate redirect to home page
-		   		return Redirect::intended('/');		   		 
+				// Check user account is activated or not
+				if(!Auth::user()->active) 
+				{
+	        		Auth::logout();
+	        		return Redirect::to('login')->with('message', 'You have not activated your account');
+		   		 }		   		 
+		   		 else
+		   		 {
+		   		 	// If activate redirect to home page
+		   		 	return Redirect::intended('/');
+		   		 }	   		 
 			}
 			else
 			{	
@@ -66,7 +75,14 @@ class UsersController extends BaseController {
 		    $user->active=0;
 		    $user->user_type=0;									
 		    $user->save();
-		    return Redirect::to('login')->with('message', 'Thanks for registering!');
+
+		    // Send mail to user account with activation link and message
+
+		    // Mail::send('mails.welcome', array('link'=>URL::to('activate',$user->code),'username'=>Input::get('username')), function($message){
+		    //     $message->to(Input::get('email'), Input::get('first_name').' '.Input::get('last_name'))->subject('Welcome to the Laravel 4 Shopping cart!');
+		    // });	
+
+		    return Redirect::to('login')->with('message', 'Thanks for registering! An activation link has been sent to your email address. please activate your accont');
 		}
 		else
 		{
@@ -74,4 +90,29 @@ class UsersController extends BaseController {
 			return Redirect::to('register')->withErrors($validator);
 		}
 	}
+
+	// Function to perform activation of user account
+    public function getActivate($code)
+    {
+    	$user=User::where('code','=',$code)->where('active','=',0);
+    	if($user->count())
+    	{
+    		$user=$user->first();
+    		$user->active=1;			//Update the active column
+    		$user->code='';				//Update the code column
+    		if($user->save())			//update user table
+    		{
+    			//Activate if not activated redirect to login page
+    			return Redirect::to('login')->with('message','Your account is successfully activated!, you can now login!');
+    		}
+    		else
+    		{
+    			//Error in activation
+    			return Redirect::to('login')->with('message','We could not activate your account, Please try latter');
+    		}
+    	}
+    	//Account already activated message
+    	return Redirect::to('login')->with('message','You have already activated your account ');
+    	    	
+    }
 }
