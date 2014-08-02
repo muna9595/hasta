@@ -26,6 +26,7 @@
 			 
 			    <div class='form-group'>
 			        {{ Form::submit('Login', ['class' => 'btn btn-primary']) }}
+			        <a href="{{URL::to('/reset')}}">Forgot password?</a>
 			    </div>			 
 			    </form>		 
 			</div>

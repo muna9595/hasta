@@ -8,6 +8,10 @@
 			            <div class='bg-danger alert'>{{ $error }}</div>
 			        @endforeach
 			    @endif  -->
+			    @if(Session::has('message'))
+					<p>{{Session::get('message')}}</p>
+				@endif	
+				
 			    {{ Form::open(['role' => 'form']) }}			 
 			    <div class='form-group'>
 			        {{ Form::label('first_name', 'First Name') }}

@@ -3,8 +3,8 @@
   <title></title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet">
- <!--  <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">  -->
+ <!--  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet"> 
 
   <style type="text/css">
     .thumbnail{ padding: 0;}
@@ -51,5 +51,8 @@
     }
     .bg-danger.alert{
       color: #FC0000;
+    }
+    #box-area{
+      border: 1px solid #000;
     }
   </style>

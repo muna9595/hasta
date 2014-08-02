@@ -13,3 +13,12 @@ Route::get('logout', array('uses' => 'UsersController@doLogout'));
 // to handle the registration
 Route::get('register', 'UsersController@register');
 Route::post('register', 'UsersController@doregister');
+
+// to activate the user
+Route::get('activate/{code}', array('uses' => 'UsersController@getActivate'));
+
+// get to user profile
+Route::get('profile', 'UsersController@profilePage');
+
+//Reset password 
+Route::get('reset', 'UsersController@reset');

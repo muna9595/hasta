@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{{url('/')}}">Hasta</a>
+      <a class="navbar-brand" href="{{url('/')}}">IET Scholarship</a>
     </div>
 
     <div class="collapse navbar-collapse">

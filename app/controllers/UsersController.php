@@ -6,6 +6,10 @@ class UsersController extends BaseController {
 	{
 		return View::make('users.login');
 	}
+	public function reset()
+	{
+		return View::make('users.reset');
+	}	
 
 	// function to perform login
 	public function dologin()
@@ -32,8 +36,8 @@ class UsersController extends BaseController {
 		   		 }		   		 
 		   		 else
 		   		 {
-		   		 	// If activate redirect to home page
-		   		 	return Redirect::intended('/');
+		   		 	// If activate redirect to profile page
+		   		 	return Redirect::intended('profile');
 		   		 }	   		 
 			}
 			else
@@ -43,6 +47,20 @@ class UsersController extends BaseController {
 			}						
 		}		
 	}
+	// Logged user to their profile
+	public function profilePage(){
+		// allow only logged in user to view profile page.
+		if (Auth::check())
+		{
+		    return View::make('pages.profile');
+		}		
+		else
+		{
+			// if user is not logged in then redirect to login page.
+			return Redirect::to('login');
+		}
+		
+	}
 
 	// To perform logout
 	public function doLogout()
@@ -51,7 +69,7 @@ class UsersController extends BaseController {
 		return Redirect::to('login'); // redirect the user to the login screen
 	}
 
-	// function to redirect to login page
+	// function to redirect to register page
 	public function register()
 	{
 		return View::make('users.register');
@@ -59,30 +77,46 @@ class UsersController extends BaseController {
 
 	// function to perform registration
 	public function doregister(){
+		// validate the user input.
 		$validator=Validator::make(Input::all(),User::$rules);
 
 		if($validator->passes())
 		{   
-			// get the user inputs and save it to database
-
-			$user = new User;//Create a new instance of user
-	        $user->first_name = Input::get('first_name');
-		    $user->last_name = Input::get('last_name');
-		    $user->email = Input::get('email');
-	        $user->username = Input::get('username');		    
-		    $user->password = Hash::make(Input::get('password')); 
-		    $user->code=str_random(60);							// To generate some random numbar
-		    $user->active=0;
-		    $user->user_type=0;									
-		    $user->save();
-
-		    // Send mail to user account with activation link and message
-
-		    // Mail::send('mails.welcome', array('link'=>URL::to('activate',$user->code),'username'=>Input::get('username')), function($message){
-		    //     $message->to(Input::get('email'), Input::get('first_name').' '.Input::get('last_name'))->subject('Welcome to the Laravel 4 Shopping cart!');
-		    // });	
-
-		    return Redirect::to('login')->with('message', 'Thanks for registering! An activation link has been sent to your email address. please activate your accont');
+			// Begin of transaction.
+			DB::beginTransaction();
+			try
+			{
+				// get the user inputs and save it to database
+				$user = new User;//Create a new instance of user
+		        $user->first_name = Input::get('first_name');
+			    $user->last_name = Input::get('last_name');
+			    $user->email = Input::get('email');
+		        $user->username = Input::get('username');		    
+			    $user->password = Hash::make(Input::get('password')); 
+			    $user->code = str_random(60);							// To generate some random numbar
+			    $user->active=0;
+			    $user->user_type=0;									
+			    $user->save();
+			    // Send mail to user account with activation link and message
+			    // $data = array(
+			    //     'email'     => Input::get('email'),
+			    //     'username'=>Input::get('username')
+			    // );
+			    Mail::send('emails.auth.welcome', array('link'=>URL::to('activate',$user->code),'username'=>Input::get('username')), function($message){
+			        $message->to(Input::get('email'), Input::get('first_name').' '.Input::get('last_name'))->subject('Welcome to the IET-Scholarship!');
+			    });
+			    // commit if registration is done and activation mail sent to the user email address 
+			    DB::commit();
+			    // After commit redirect to login page
+			    return Redirect::to('login')->with('message', 'Thanks for registering! An activation link has been sent to your email address. please activate your account');
+			}
+			catch (\Exception $e)
+			{
+				// If either user data not saved or activation link is not send to user email address, then rollback
+   				 DB::rollback();
+   				 return Redirect::to('register')->with('message', 'Unable to register! Please check your internet connection');
+   			}
+		    
 		}
 		else
 		{
@@ -99,7 +133,7 @@ class UsersController extends BaseController {
     	{
     		$user=$user->first();
     		$user->active=1;			//Update the active column
-    		$user->code='';				//Update the code column
+    		// $user->code='';				//Update the code column
     		if($user->save())			//update user table
     		{
     			//Activate if not activated redirect to login page
@@ -113,6 +147,6 @@ class UsersController extends BaseController {
     	}
     	//Account already activated message
     	return Redirect::to('login')->with('message','You have already activated your account ');
-    	    	
     }
+
 }
