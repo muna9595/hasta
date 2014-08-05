@@ -55,4 +55,10 @@
     #box-area{
       border: 1px solid #000;
     }
+    #title-box{
+      margin: 0px -15px 0px -15px;
+      background: #101010;
+      padding: 10px;
+      color: #fff;
+    }
   </style>

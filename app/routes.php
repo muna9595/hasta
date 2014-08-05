@@ -21,4 +21,9 @@ Route::get('activate/{code}', array('uses' => 'UsersController@getActivate'));
 Route::get('profile', 'UsersController@profilePage');
 
 //Reset password 
-Route::get('reset', 'UsersController@reset');
+Route::get('reset', 'PasswordController@reset');
+Route::post('reset', 'PasswordController@doreset');
+
+// to change password
+Route::get('changepassword', 'PasswordController@changePassword');
+Route::post('changepassword', 'PasswordController@dochangePassword');

@@ -14,8 +14,10 @@
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
       	<li><a href="{{URL::to('/')}}">Home</a></li> 
-      @if(Auth::check())        
+      @if(Auth::check()) 
+        <li><a href="{{url::to('/changepassword')}}">Change password</a></li>       
         <li><a href="{{URL::to('/logout')}}">Welcome {{Auth::user()->username}}(Logout)</a></li>
+        
       @else
         <li><a href="login">Login</a></li>
         <li><a href="register">Register</a></li>

@@ -2,48 +2,36 @@
 
 class UsersController extends BaseController {
 	// to redirect to login page
-	public function login()
-	{
+	public function login(){
 		return View::make('users.login');
 	}
-	public function reset()
-	{
-		return View::make('users.reset');
-	}	
-
 	// function to perform login
-	public function dologin()
-	{
+	public function dologin(){
 		$validator = Validator::make(Input::all(), User::$rule);
 		if($validator->fails()){
 			return Redirect::to('login')->withErrors($validator);	
 		}
-		else
-		{
+		else{
 			//chack user is register or not
 			$auth=Auth::attempt(array(
 			'username'=>Input::get('username'),
 			'password'=>Input::get('password'),						
 			));
 			// If register
-			if($auth)
-			{	
+			if($auth){	
 				// Check user account is activated or not
-				if(!Auth::user()->active) 
-				{
+				if(!Auth::user()->active){
 	        		Auth::logout();
 	        		return Redirect::to('login')->with('message', 'You have not activated your account');
 		   		 }		   		 
-		   		 else
-		   		 {
+		   		 else{
 		   		 	// If activate redirect to profile page
 		   		 	return Redirect::intended('profile');
 		   		 }	   		 
 			}
-			else
-			{	
+			else{	
 				//If not register redirect to login page
-				return Redirect::to('login')->withErrors($validator);
+				return Redirect::to('login')->with('message', 'The email or password you entered is incorrect.');
 			}						
 		}		
 	}
